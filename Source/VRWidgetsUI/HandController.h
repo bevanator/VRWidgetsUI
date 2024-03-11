@@ -3,6 +3,7 @@
 
 #include "CoreMinimal.h"
 #include "MotionControllerComponent.h"
+#include "Stroke.h"
 #include "GameFramework/Actor.h"
 #include "HandController.generated.h"
 
@@ -13,6 +14,8 @@ class VRWIDGETSUI_API AHandController : public AActor
 	
 public:	
 	AHandController();
+	void TriggerPressed();
+	void TriggerReleased();
 
 protected:
 	virtual void BeginPlay() override;
@@ -23,7 +26,12 @@ public:
 private:
 	//Components
 
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<AStroke> StrokeClass;
+	
 	UPROPERTY(VisibleAnywhere)
 	UMotionControllerComponent* MotionController;
+
+	AStroke* CurrentStroke;
 	
 };
