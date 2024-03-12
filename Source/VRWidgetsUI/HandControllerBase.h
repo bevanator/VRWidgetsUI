@@ -3,19 +3,19 @@
 
 #include "CoreMinimal.h"
 #include "MotionControllerComponent.h"
-#include "Stroke.h"
 #include "GameFramework/Actor.h"
-#include "HandController.generated.h"
+#include "HandControllerBase.generated.h"
 
 UCLASS()
-class VRWIDGETSUI_API AHandController : public AActor
+class VRWIDGETSUI_API AHandControllerBase : public AActor
 {
 	GENERATED_BODY()
+
 	
 public:	
-	AHandController();
-	void TriggerPressed();
-	void TriggerReleased();
+	AHandControllerBase();
+	virtual void TriggerPressed() {}
+	virtual void TriggerReleased() {}
 
 protected:
 	virtual void BeginPlay() override;
@@ -25,13 +25,7 @@ public:
 
 private:
 	//Components
-
-	UPROPERTY(EditAnywhere)
-	TSubclassOf<AStroke> StrokeClass;
-	
 	UPROPERTY(VisibleAnywhere)
 	UMotionControllerComponent* MotionController;
 
-	AStroke* CurrentStroke;
-	
 };

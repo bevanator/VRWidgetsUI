@@ -2,8 +2,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "HandController.h"
-#include "Stroke.h"
+#include "HandControllerBase.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/Pawn.h"
 #include "VRPawn.generated.h"
@@ -29,7 +28,7 @@ protected:
 private:
 
 	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<AHandController> HandControllerClass;
+	TSubclassOf<AHandControllerBase> HandControllerClass;
 	
 	UPROPERTY(VisibleAnywhere)
 	USceneComponent* VRRoot;
@@ -38,7 +37,7 @@ private:
 	UCameraComponent* Camera;
 
 	UPROPERTY()
-	AHandController* RightHandController;
+	AHandControllerBase* RightHandController;
 
 
 
