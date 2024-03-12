@@ -23,6 +23,9 @@ protected:
 	void RightTriggerReleased() { if (RightHandController) RightHandController->TriggerReleased();};
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
 
+	void Load();
+	void Save();
+
 private:
 
 	UPROPERTY(EditDefaultsOnly)
@@ -42,7 +45,13 @@ private:
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	UInputAction* Action1;
+	UInputAction* DrawAction;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UInputAction* SaveAction;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UInputAction* LoadAction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	UInputMappingContext* MappingContext;

@@ -14,19 +14,43 @@ AStroke::AStroke()
 
 	StrokeMeshes = CreateDefaultSubobject<UInstancedStaticMeshComponent>(TEXT("StrokeMesh"));
 	StrokeMeshes->SetupAttachment(Root);
+
+	JointMeshes = CreateDefaultSubobject<UInstancedStaticMeshComponent>(TEXT("JointMeshes"));
+	JointMeshes->SetupAttachment(Root);
 	
 }
 
-void AStroke::UpdateInstanced(FVector CursorLocation)
+void AStroke::Update(FVector CursorLocation)
 {
+	ControlPoints.Add(CursorLocation);
 	if(PreviousCursorLocation.IsNearlyZero())
 	{
 		PreviousCursorLocation = CursorLocation;
+		JointMeshes->AddInstance(GetNextJointTransform(CursorLocation));
 		return;
 	}
 	StrokeMeshes->AddInstance(GetNextSegmentTransform(CursorLocation));
+	JointMeshes->AddInstance(GetNextJointTransform(CursorLocation));
 	// StrokeMeshes->SetupAttachment(Root);
 	PreviousCursorLocation = CursorLocation;
+}
+
+FStrokeState AStroke::SerializeToStruct() const
+{
+	FStrokeState StrokeState;
+	StrokeState.Class = GetClass();
+	StrokeState.ControlPoints = ControlPoints;
+	return StrokeState;
+}
+
+AStroke* AStroke::DeserializeFromStruct(UWorld* World, const FStrokeState& StrokeState)
+{
+	AStroke* Stroke = World->SpawnActor<AStroke>(StrokeState.Class);
+	for (FVector ControlPoint : StrokeState.ControlPoints)
+	{
+		Stroke->Update(ControlPoint);
+	}
+	return Stroke;
 }
 
 
@@ -37,6 +61,13 @@ FTransform AStroke::GetNextSegmentTransform(FVector CurrentLocation) const
 	SegmentTransform.SetRotation(GetNextSegmentRotation(CurrentLocation));
 	SegmentTransform.SetLocation(GetNextSegmentLocation(CurrentLocation));
 	return SegmentTransform;
+}
+
+FTransform AStroke::GetNextJointTransform(FVector CurrentLocation) const
+{
+	FTransform JointTransform;
+	JointTransform.SetLocation(GetTransform().InverseTransformPosition(CurrentLocation));
+	return JointTransform;
 }
 
 FVector AStroke::GetNextSegmentScale(FVector CurrentLocation) const

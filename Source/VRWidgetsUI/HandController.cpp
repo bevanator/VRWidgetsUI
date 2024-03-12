@@ -36,7 +36,7 @@ void AHandController::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 	if(CurrentStroke)
 	{
-		CurrentStroke->UpdateInstanced(GetActorLocation());
+		CurrentStroke->Update(GetActorLocation());
 	}
 	
 }
