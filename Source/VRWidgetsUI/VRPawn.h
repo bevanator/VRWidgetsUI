@@ -22,8 +22,12 @@ protected:
 	void RightTriggerReleased() { if (RightHandController) RightHandController->TriggerReleased();};
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
 
-	void Load();
+	// void Load();
 	void Save();
+
+	//States
+	FString CurrentSlotName;
+	
 
 private:
 

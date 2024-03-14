@@ -25,7 +25,7 @@ class VRWIDGETSUI_API UVRSaveGame : public USaveGame
 public:
 	static UVRSaveGame* Create();
 	bool Save();
-	static UVRSaveGame* Load();
+	static UVRSaveGame* Load(FString SlotName);
 	
 	void SetState(FString NewState) { State = NewState;}
 	FString GetState() const { return State;}
@@ -34,10 +34,15 @@ public:
 	void DeserializeToWorld(UWorld* World);
 	void ClearWorld(UWorld* World);
 
+	FString GetSlotName() const { return SlotName; }
+
 private:
 	//State
 	UPROPERTY()
 	FString State;
+
+	UPROPERTY()
+	FString SlotName;
 
 	UPROPERTY()
 	TArray<FStrokeState> Strokes;

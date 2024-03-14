@@ -2,23 +2,33 @@
 
 #include "VRSaveGame.h"
 #include "EngineUtils.h"
+#include "PainterSaveGameIndex.h"
 #include "Kismet/GameplayStatics.h"
 #include "VRWidgetsUI/Stroke.h"
 
 UVRSaveGame* UVRSaveGame::Create()
 {
+	//create a save game using "UGameplayStatics::CreateSaveGameObject(StaticClass())"
+	//cast to self, generate a unique identifier (guid) and return
 	USaveGame* NewSaveGame = UGameplayStatics::CreateSaveGameObject(StaticClass());
-	return Cast<UVRSaveGame>(NewSaveGame);
+	UVRSaveGame* NewVRSaveGame = Cast<UVRSaveGame>(NewSaveGame);
+	NewVRSaveGame->SlotName = FGuid::NewGuid().ToString();
+	if(!NewVRSaveGame->Save()) return nullptr;
+
+	UPainterSaveGameIndex* Index = UPainterSaveGameIndex::Load();
+	Index->AddSaveGame(NewVRSaveGame);
+	Index->Save();
+	return NewVRSaveGame;
 }
 
 bool UVRSaveGame::Save()
 {
-	return UGameplayStatics::SaveGameToSlot(this, TEXT("Test"), 0);
+	return UGameplayStatics::SaveGameToSlot(this, SlotName, 0);
 }
 
-UVRSaveGame* UVRSaveGame::Load()
+UVRSaveGame* UVRSaveGame::Load(FString SlotName)
 {
-	return Cast<UVRSaveGame>(UGameplayStatics::LoadGameFromSlot(TEXT("Test"), 0));
+	return Cast<UVRSaveGame>(UGameplayStatics::LoadGameFromSlot(SlotName, 0));
 }
 
 void UVRSaveGame::SerializeFromWorld(const UWorld* World)
