@@ -14,6 +14,8 @@ class VRWIDGETSUI_API AHandControllerBase : public AActor
 	
 public:	
 	AHandControllerBase();
+
+	void SetHand(EControllerHand Hand);
 	virtual void TriggerPressed() {}
 	virtual void TriggerReleased() {}
 
@@ -23,9 +25,10 @@ protected:
 public:	
 	virtual void Tick(float DeltaTime) override;
 
-private:
+protected:
+	
+	UPROPERTY
 	//Components
-	UPROPERTY(VisibleAnywhere)
+	(VisibleAnywhere)
 	UMotionControllerComponent* MotionController;
-
 };

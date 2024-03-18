@@ -3,6 +3,8 @@
 
 #include "UIPointerHandController.h"
 
+#include "Utilities/Logger.h"
+
 AUIPointerHandController::AUIPointerHandController()
 {
 	Root = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
@@ -20,7 +22,8 @@ AUIPointerHandController::AUIPointerHandController()
 
 void AUIPointerHandController::TriggerPressed()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Pressed!"));
+	// UE_LOG(LogTemp, Warning, TEXT("Pressed!"));
+	Logger::Log("Pressed!");
 	Pointer->PressPointerKey(EKeys::LeftMouseButton);
 }
 

@@ -8,9 +8,13 @@ AHandControllerBase::AHandControllerBase()
 	PrimaryActorTick.bCanEverTick = false;
 	MotionController = CreateDefaultSubobject<UMotionControllerComponent>(TEXT("MotionController"));
 	SetRootComponent(MotionController);
-	MotionController->SetTrackingSource(EControllerHand::Right);
 	MotionController->SetShowDeviceModel(true);
+	// MotionController->SetTrackingSource(EControllerHand::Right);
+}
 
+void AHandControllerBase::SetHand(EControllerHand Hand)
+{
+	MotionController->SetTrackingSource(Hand);
 }
 
 void AHandControllerBase::BeginPlay()

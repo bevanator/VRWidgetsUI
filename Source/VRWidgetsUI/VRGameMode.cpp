@@ -39,3 +39,9 @@ void AVRGameMode::Load()
 	}
 	else UE_LOG(LogTemp, Warning, TEXT("Game slot not found! %s"), *SlotName);
 }
+
+void AVRGameMode::SaveAndQuit()
+{
+	Save();
+	UGameplayStatics::OpenLevel(GetWorld(), TEXT("MainMenu"));
+}

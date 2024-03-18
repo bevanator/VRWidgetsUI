@@ -15,12 +15,14 @@ class VRWIDGETSUI_API AVRGameMode : public AGameModeBase
 	GENERATED_BODY()
 
 protected:
-	void Load();
 	void BeginPlay() override;
 
 public:
 	void InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage) override;
 	void Save();
+	void Load();
+	UFUNCTION(BlueprintCallable)
+	void SaveAndQuit();
 	
 private:
 	FString SlotName;

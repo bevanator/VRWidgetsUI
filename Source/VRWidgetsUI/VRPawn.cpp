@@ -5,7 +5,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "VRGameMode.h"
 #include "Kismet/GameplayStatics.h"
-#include "Saving/VRSaveGame.h"
+#include "Utilities/Logger.h"
 
 AVRPawn::AVRPawn()
 {
@@ -21,11 +21,12 @@ AVRPawn::AVRPawn()
 void AVRPawn::BeginPlay()
 {
 	Super::BeginPlay();
-	UVRSaveGame* Painting = UVRSaveGame::Create();
-	if(Painting && Painting->Save())
-	{
-		CurrentSlotName = Painting->GetSlotName();
-	}
+	
+	// UVRSaveGame* Painting = UVRSaveGame::Create();
+	// if(Painting && Painting->Save())
+	// {
+	// 	CurrentSlotName = Painting->GetSlotName();
+	// }
 
 	if(APlayerController* PlayerController = Cast<APlayerController>(GetController()))
 	{
@@ -41,10 +42,41 @@ void AVRPawn::BeginPlay()
 		RightHandController = GetWorld()->SpawnActor<AHandControllerBase>(HandControllerClass);
 		RightHandController->AttachToComponent(GetRootComponent(), FAttachmentTransformRules::SnapToTargetIncludingScale);
 		RightHandController->SetOwner(this);
+		RightHandController->SetHand(EControllerHand::Right);
+	}
+
+	if(LeftHandControllerClass)
+	{
+		LeftHandController = GetWorld()->SpawnActor<AHandControllerBase>(LeftHandControllerClass);
+		LeftHandController->AttachToComponent(GetRootComponent(), FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+		LeftHandController->SetOwner(this);
+		LeftHandController->SetHand(EControllerHand::Left);
+
 	}
 
 
 }
+
+void AVRPawn::ScrollAxisInput(const FInputActionValue& Value)
+{
+	float AxisValue = Value.Get<float>();
+	int32 PaginationOffset = 0;
+	PaginationOffset += AxisValue > 0.9 ? 1 : 0;
+	PaginationOffset += AxisValue < -0.9 ? -1 : 0;
+
+	if (PaginationOffset != LastPaginationOffset && PaginationOffset != 0)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Paginate %d"), PaginationOffset);
+	}
+
+	LastPaginationOffset = PaginationOffset;
+}
+
+void AVRPawn::HandleAxisInput(float AxisValue)
+{
+	
+}
+
 
 void AVRPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
@@ -53,33 +85,9 @@ void AVRPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	{
 		EnhancedInputComponent->BindAction(DrawAction, ETriggerEvent::Started, this, &AVRPawn::RightTriggerPressed);
 		EnhancedInputComponent->BindAction(DrawAction, ETriggerEvent::Completed, this, &AVRPawn::RightTriggerReleased);
-		EnhancedInputComponent->BindAction(SaveAction, ETriggerEvent::Started, this, &AVRPawn::Save);
+		EnhancedInputComponent->BindAction(ScrollAction, ETriggerEvent::Started, this, &AVRPawn::ScrollAxisInput);
+		// EnhancedInputComponent->BindAction(SaveAction, ETriggerEvent::Started, this, &AVRPawn::Save);
 		// EnhancedInputComponent->BindAction(LoadAction, ETriggerEvent::Started, this, &AVRPawn::Load);
 	}
 }
 
-void AVRPawn::Save()
-{
-	auto GameMode = Cast<AVRGameMode>(GetWorld()->GetAuthGameMode());
-	if(!GameMode) return;
-	GameMode->Save();
-	UGameplayStatics::OpenLevel(GetWorld(), TEXT("MainMenu"));
-	// UVRSaveGame* Painting = UVRSaveGame::Load(CurrentSlotName);
-	// if(Painting)
-	// {
-	// 	Painting->SetState("Hello!");
-	// 	Painting->SerializeFromWorld(GetWorld());
-	// 	Painting->Save();
-	// }
-}
-
-// void AVRPawn::Load()
-// {
-	// UVRSaveGame* Painting = UVRSaveGame::Load(CurrentSlotName);
-	// if(Painting)
-	// {
-	// 	Painting->DeserializeToWorld(GetWorld());
-	// 	UE_LOG(LogTemp, Warning, TEXT("Painting State %s"), *Painting->GetState());
-	// }
-	// else UE_LOG(LogTemp, Warning, TEXT("Not found!"));
-// }
